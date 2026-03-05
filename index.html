@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Beta Game</title>
+
+<style>
+
+body{
+margin:0;
+background:black;
+overflow:hidden;
+font-family:monospace;
+}
+
+/* CLICK PARA COMENZAR */
+
+#inicio{
+position:fixed;
+width:100%;
+height:100%;
+display:flex;
+justify-content:center;
+align-items:center;
+background:black;
+cursor:pointer;
+z-index:10;
+}
+
+.glitch{
+font-size:40px;
+color:white;
+position:relative;
+animation:glitch 0.2s infinite;
+}
+
+@keyframes glitch{
+
+0%{transform:translate(0);}
+25%{transform:translate(-3px,2px);}
+50%{transform:translate(3px,-2px);}
+75%{transform:translate(-2px,-2px);}
+100%{transform:translate(0);}
+
+}
+
+/* MENU */
+
+#menu{
+display:none;
+position:relative;
+width:100vw;
+height:100vh;
+}
+
+#menu img.fondo{
+position:absolute;
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+/* BOTONES */
+
+.boton{
+position:absolute;
+width:280px;
+cursor:pointer;
+transition:0.2s;
+image-rendering:pixelated;
+}
+
+.boton:hover{
+filter:brightness(0.6);
+}
+
+.boton:active{
+filter:brightness(0.4);
+}
+
+/* POSICIONES */
+
+#jugar{
+top:60%;
+left:29%;
+}
+
+#muere{
+top:58%;
+left:52%;
+}
+
+/* VIDEO */
+
+#game{
+display:none;
+width:100%;
+height:100vh;
+background:black;
+}
+
+video{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="inicio">
+<div class="glitch">
+CLICK PARA COMENZAR BETA GAME
+</div>
+</div>
+
+<div id="menu">
+
+<img src="menu.png" class="fondo">
+
+<img src="juega.png" class="boton" id="jugar">
+
+<img src="muere.png" class="boton" id="muere">
+
+</div>
+
+<div id="game"></div>
+
+<audio id="musica" src="musica.mp3" loop></audio>
+
+<script>
+
+const inicio = document.getElementById("inicio")
+const menu = document.getElementById("menu")
+const jugar = document.getElementById("jugar")
+const muere = document.getElementById("muere")
+const musica = document.getElementById("musica")
+const game = document.getElementById("game")
+
+/* CLICK PARA COMENZAR */
+
+inicio.onclick = () => {
+
+inicio.style.display="none"
+menu.style.display="block"
+musica.play()
+
+}
+
+/* BOTON JUGAR */
+
+jugar.onclick = () => {
+
+jugar.classList.add("glitch")
+
+setTimeout(()=>{
+
+alert("Aquí empezaría el juego")
+
+},800)
+
+}
+
+/* BOTON MUERE */
+
+muere.onclick = () => {
+musica.pause();
+menu.style.display="none"
+game.style.display="block"
+
+game.innerHTML = `
+<video autoplay>
+<source src="muere.mp4" type="video/mp4">
+</video>
+`
+
+}
+
+</script>
+
+</body>
+</html>
