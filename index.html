@@ -1,0 +1,332 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Beta Game</title>
+
+<style>
+
+html,body{
+margin:0;
+padding:0;
+width:100%;
+height:100%;
+background:black;
+overflow:hidden;
+font-family:monospace;
+}
+
+/* CLICK PARA COMENZAR */
+
+#inicio{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+display:flex;
+justify-content:center;
+align-items:center;
+background:black;
+cursor:pointer;
+z-index:10;
+}
+
+.glitch{
+font-size:40px;
+color:white;
+animation:glitch 0.2s infinite;
+}
+
+@keyframes glitch{
+0%{transform:translate(0);}
+25%{transform:translate(-3px,2px);}
+50%{transform:translate(3px,-2px);}
+75%{transform:translate(-2px,-2px);}
+100%{transform:translate(0);}
+}
+
+/* MENU */
+
+#menu{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+}
+
+#menu img.fondo{
+position:absolute;
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.boton{
+position:absolute;
+width:280px;
+cursor:pointer;
+image-rendering:pixelated;
+}
+
+#jugar{top:62%;left:29%;}
+#muere{top:58%;left:52%;}
+
+/* GAME */
+
+#game{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+overflow:hidden;
+}
+
+/* CASA */
+
+#fondoGame{
+width:100%;
+height:100%;
+object-fit:cover;
+image-rendering:pixelated;
+}
+
+/* NUBES */
+
+.nube{
+position:absolute;
+left:-200px;
+image-rendering:pixelated;
+animation:moverNube linear forwards;
+pointer-events:none;
+}
+
+@keyframes moverNube{
+0%{left:-200px;}
+100%{left:110%;}
+}
+
+/* BOTON PAYASO */
+
+#payaso{
+position:absolute;
+width:90px;
+bottom:20px;
+right:20px;
+cursor:pointer;
+}
+
+/* BOTON ELEVADOR */
+
+#elevador{
+position:absolute;
+width:90px;
+bottom:20px;
+left:20px;
+cursor:pointer;
+}
+
+/* MAPA PAYASOS */
+
+#mapaPayasos{
+position:fixed;
+top:0;
+left:0;
+width:100vw;
+height:100vh;
+object-fit:cover;
+image-rendering:pixelated;
+}
+
+/* BOTON CASA */
+
+#casaboton{
+position:absolute;
+width:90px;
+bottom:20px;
+right:20px;
+cursor:pointer;
+image-rendering:pixelated;
+z-index:1000;
+}
+
+video{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="inicio">
+<div class="glitch">
+CLICK PARA COMENZAR BETA GAME
+</div>
+</div>
+
+<div id="menu">
+
+<img src="menu.png" class="fondo">
+<img src="juega.png" class="boton" id="jugar">
+<img src="muere.png" class="boton" id="muere">
+
+</div>
+
+<div id="game"></div>
+
+<audio id="musica" src="musica.mp3" loop></audio>
+<audio id="ticktock" src="ticktock.mp3" loop></audio>
+
+<script>
+
+const inicio = document.getElementById("inicio")
+const menu = document.getElementById("menu")
+const jugar = document.getElementById("jugar")
+const muere = document.getElementById("muere")
+const musica = document.getElementById("musica")
+const ticktock = document.getElementById("ticktock")
+const game = document.getElementById("game")
+
+let nubesActivas = true
+
+inicio.onclick = () => {
+
+inicio.style.display="none"
+menu.style.display="block"
+musica.play().catch(()=>{})
+
+}
+
+/* CASA */
+
+function mostrarCasa(){
+
+ticktock.pause()
+ticktock.currentTime = 0
+
+game.innerHTML = `
+<img src="casafede.png" id="fondoGame">
+<img src="payasoboton.png" id="payaso">
+<img src="elevador.png" id="elevador">
+`
+
+nubesActivas = true
+iniciarNubes()
+
+const payaso = document.getElementById("payaso")
+
+payaso.onclick = mostrarMapa
+
+}
+
+/* MAPA PAYASOS */
+
+function mostrarMapa(){
+
+nubesActivas = false
+
+document.querySelectorAll(".nube").forEach(n=>n.remove())
+
+ticktock.play()
+
+game.innerHTML = `
+<img src="payasos.png" id="mapaPayasos">
+<img src="casaboton.png" id="casaboton">
+`
+
+const casa = document.getElementById("casaboton")
+
+casa.onclick = mostrarCasa
+
+}
+
+/* JUGAR */
+
+jugar.onclick = () => {
+
+musica.pause()
+
+menu.style.display="none"
+game.style.display="block"
+
+mostrarCasa()
+
+}
+
+/* MUERE */
+
+muere.onclick = () => {
+
+musica.pause()
+menu.style.display="none"
+
+game.innerHTML = `
+<video autoplay controls>
+<source src="muere.mp4" type="video/mp4">
+</video>
+`
+
+game.style.display="block"
+
+}
+
+/* NUBES */
+
+function crearNube(){
+
+if(!nubesActivas) return
+
+const nube = document.createElement("img")
+
+nube.src = "nube.png"
+nube.className = "nube"
+
+nube.style.top = Math.random()*110 + "px"
+
+let tamaño = 100 + Math.random()*200
+nube.style.width = tamaño + "px"
+
+let velocidad = 10 + Math.random()*25
+nube.style.animationDuration = velocidad + "s"
+
+game.appendChild(nube)
+
+setTimeout(()=>{
+
+nube.remove()
+
+},30000)
+
+}
+
+function iniciarNubes(){
+
+function loop(){
+
+if(!nubesActivas) return
+
+crearNube()
+
+let tiempo = Math.random()*2100 + 1300
+
+setTimeout(loop, tiempo)
+
+}
+
+loop()
+
+}
+
+</script>
+
+</body>
+</html>
+```
